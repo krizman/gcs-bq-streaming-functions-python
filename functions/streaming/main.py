@@ -22,6 +22,7 @@ This Cloud function is responsible for:
 - Publishing a message to either an error or success topic in Cloud Pub/Sub.
 '''
 
+import csv
 import json
 import logging
 import os
