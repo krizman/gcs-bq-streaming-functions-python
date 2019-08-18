@@ -104,7 +104,7 @@ def _insert_into_bigquery(bucket_name, file_name):
             continue
 
         # parse datetime to be able to use it later in the correct format 
-        dateTimeParsed = datetime.datetime.strptime(dateTime, '%b %d, %Y %I:%M:%S %p')
+        dateTimeParsed = datetime.strptime(dateTime, '%b %d, %Y %I:%M:%S %p')
 
         # append transformed data to rows list
         # TODO: Try to avoid the CSV "schema dependency" in the script...
