@@ -129,7 +129,12 @@ def _insert_into_bigquery(bucket_name, file_name):
 
     # insert transformed data to BQ table
     table = BQ.dataset(BQ_DATASET).table(BQ_TABLE)
-    errors = BQ.insert_rows(table, fileContents)
+    errors = BQ.insert_rows(
+        table, 
+        fileContents, 
+        selected_fields = None,
+        row_ids=[file_name],
+        retry=retry.Retry(deadline=30))
 
     # check and raise any errors
     if errors != []:
