@@ -152,6 +152,10 @@ def _insert_rows_to_table(table, rows):
     if errors != []:
         raise BigQueryError(errors)
 
+    # TODO: use debug level, but first set minimum logging level 
+    # somewhere because it is not reaching stackdriver logging
+    logging.info(f"Moved {len(rows)} rows to BQ table")
+
 
 def _handle_success(db_ref):
     message = 'File \'%s\' streamed into BigQuery' % db_ref.id
