@@ -129,12 +129,12 @@ def _insert_into_bigquery(bucket_name, file_name):
             creeperStatus)
         parsedRows.append(row)
 
-        logging.info("row inserted: " + str(row))
+        #logging.info("row inserted: " + str(row))
 
     # insert transformed data to BQ table
     tableRef = BQ.dataset(BQ_DATASET).table(BQ_TABLE)
     table = BQ.get_table(tableRef)
-    errors = BQ.insert_rows(table, rows)
+    errors = BQ.insert_rows(table, parsedRows)
 
     # check and raise any errors
     if errors != []:
