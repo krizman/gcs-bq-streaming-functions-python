@@ -129,7 +129,7 @@ def _insert_into_bigquery(bucket_name, file_name):
             creeperStatus)
         parsedRows.append(row)
 
-        logging.debug("row inserted: " + str(row))
+        logging.info("row inserted: " + str(row))
 
     # insert transformed data to BQ table
     tableRef = BQ.dataset(BQ_DATASET).table(BQ_TABLE)
