@@ -109,7 +109,7 @@ def _insert_into_bigquery(bucket_name, file_name):
 
         # append transformed data to rows list
         # TODO: Try to avoid the CSV "schema dependency" in the script...
-        parsedRows.append((
+        row = (
             str(dateTimeParsed), 
             serial, 
             gpsLat + ', ' + gpsLon, 
@@ -126,7 +126,10 @@ def _insert_into_bigquery(bucket_name, file_name):
             parkingBreakStatus, 
             differentialLockStatus, 
             allWheelStatus, 
-            creeperStatus))
+            creeperStatus)
+        parsedRows.append(row)
+
+        logging.debug("row inserted: " + str(row))
 
     # insert transformed data to BQ table
     tableRef = BQ.dataset(BQ_DATASET).table(BQ_TABLE)
