@@ -83,15 +83,19 @@ def _handle_duplication(db_ref):
 
 
 def _insert_into_bigquery(bucket_name, file_name):
+    # get bucket file and BQ table handles
     blob = CS.get_bucket(bucket_name).blob(file_name)
+    tableRef = BQ.dataset(BQ_DATASET).table(BQ_TABLE)
+    table = BQ.get_table(tableRef)
     
     # TODO: check if batching below flow of data is a better approach. Be mindful about the "ACID" principle also ...
-    # batching can be implemented from the blob all the way to the "insert into BQ"
     
     # parse CSV data and transform it
     fileContents = blob.download_as_string().decode('utf-8')
     csvData = csv.reader(StringIO(fileContents), delimiter=';')
-    parsedRows = []
+
+    batchSize = 500;
+    rows = []
     first = True
     for dateTime, serial, gpsLon, gpsLat, workingHs, engineRpm, \
         engineLoad, fuelConsumption, speedGearbox, speedRadar, \
@@ -100,7 +104,7 @@ def _insert_into_bigquery(bucket_name, file_name):
         allWheelStatus, creeperStatus in csvData:
 
         # skip header
-        if (first):
+        if first:
             first = False
             continue
 
@@ -127,13 +131,21 @@ def _insert_into_bigquery(bucket_name, file_name):
             differentialLockStatus, 
             allWheelStatus, 
             creeperStatus)
-        parsedRows.append(row)
+        #logging.info("parsed row: " + str(row))
+        rows.append(row)
 
-        #logging.info("row inserted: " + str(row))
+        if len(rows) >= batchSize:
+            # insert transformed data to BQ table
+            _insert_rows_to_table(table, rows)
+            # clear buffer rows
+            rows.clear()
 
-    # insert transformed data to BQ table
-    tableRef = BQ.dataset(BQ_DATASET).table(BQ_TABLE)
-    table = BQ.get_table(tableRef)
+    # insert any remaining rows
+    if len(rows) >= 0:
+        _insert_rows_to_table(table, rows)
+
+
+def _insert_rows_to_table(table, rows):
     errors = BQ.insert_rows(table, parsedRows)
 
     # check and raise any errors
