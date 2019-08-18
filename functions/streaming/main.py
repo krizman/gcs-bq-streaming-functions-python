@@ -27,6 +27,7 @@ import logging
 import os
 import traceback
 from datetime import datetime
+from io import StringIO
 
 from google.api_core import retry
 from google.cloud import bigquery
@@ -81,12 +82,59 @@ def _handle_duplication(db_ref):
 
 def _insert_into_bigquery(bucket_name, file_name):
     blob = CS.get_bucket(bucket_name).blob(file_name)
-    row = json.loads(blob.download_as_string())
+    
+    # TODO: check if batching below flow of data is a better approach. Be mindful about the "ACID" principle also ...
+    # batching can be implemented from the blob all the way to the "insert into BQ"
+    
+    # parse CSV data and transform it
+    fileContents = blob.download_as_string()
+    csvData = csv.reader(StringIO(fileContents), delimiter=';')
+    parsedRows = []
+    first = True
+    for dateTime, serial, gpsLon, gpsLat, workingHs, engineRpm, \
+        engineLoad, fuelConsumption, speedGearbox, speedRadar, \
+        motorTemperature, frontPtoRpm, rearPtoRpm, gearShift, \
+        ambientTemperature, parkingBreakStatus, differentialLockStatus, \
+        allWheelStatus, creeperStatus in csvData:
+
+        # skip header
+        if (first):
+            first = False
+            continue
+
+        # parse datetime to be able to use it later in the correct format 
+        dateTimeParsed = datetime.datetime.strptime(dateTime, '%b %d, %Y %I:%M:%S %p')
+
+        # append transformed data to rows list
+        # TODO: Try to avoid the CSV "schema dependency" in the script...
+        parsedRows.append((
+            str(dateTimeParsed), 
+            serial, 
+            gpsLat + ', ' + gpsLon, 
+            workingHs, engineRpm, 
+            engineLoad, 
+            fuelConsumption, 
+            speedGearbox, 
+            speedRadar, 
+            motorTemperature, 
+            frontPtoRpm, 
+            rearPtoRpm, 
+            gearShift, 
+            ambientTemperature, 
+            parkingBreakStatus, 
+            differentialLockStatus, 
+            allWheelStatus, 
+            creeperStatus))
+
+    # insert transformed data to BQ table
     table = BQ.dataset(BQ_DATASET).table(BQ_TABLE)
-    errors = BQ.insert_rows_json(table,
-                                 json_rows=[row],
-                                 row_ids=[file_name],
-                                 retry=retry.Retry(deadline=30))
+    errors = BQ.insert_rows(
+        table, 
+        fileContents,
+        row_ids=[file_name],
+        retry=retry.Retry(deadline=30))
+
+    # check and raise any errors
     if errors != []:
         raise BigQueryError(errors)
 
