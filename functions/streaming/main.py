@@ -88,7 +88,7 @@ def _insert_into_bigquery(bucket_name, file_name):
     # batching can be implemented from the blob all the way to the "insert into BQ"
     
     # parse CSV data and transform it
-    fileContents = blob.download_as_string()
+    fileContents = blob.download_as_string().decode('utf-8')
     csvData = csv.reader(StringIO(fileContents), delimiter=';')
     parsedRows = []
     first = True
