@@ -40,6 +40,7 @@ import pytz
 
 
 PROJECT_ID = os.getenv('GCP_PROJECT')
+# TODO: get dataset and table names from environmental variables
 BQ_DATASET = 'Telematics'
 BQ_TABLE = 'TractorsData'
 ERROR_TOPIC = 'projects/%s/topics/%s' % (PROJECT_ID, 'streaming_error_topic')
@@ -130,12 +131,7 @@ def _insert_into_bigquery(bucket_name, file_name):
     # insert transformed data to BQ table
     tableRef = BQ.dataset(BQ_DATASET).table(BQ_TABLE)
     table = BQ.get_table(tableRef)
-    errors = BQ.insert_rows(
-        table, 
-        fileContents, 
-        selected_fields = None,
-        row_ids=[file_name],
-        retry=retry.Retry(deadline=30))
+    errors = BQ.insert_rows(table, fileContents)
 
     # check and raise any errors
     if errors != []:
