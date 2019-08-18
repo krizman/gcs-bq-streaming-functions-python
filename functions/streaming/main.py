@@ -146,7 +146,7 @@ def _insert_into_bigquery(bucket_name, file_name):
 
 
 def _insert_rows_to_table(table, rows):
-    errors = BQ.insert_rows(table, parsedRows)
+    errors = BQ.insert_rows(table, rows)
 
     # check and raise any errors
     if errors != []:
