@@ -1,59 +1,98 @@
 [
     {
-        "name": "id",
+        "name": "DateTime",
+        "type": "DATETIME",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "SerialNumber",
+        "type": "STRING",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "GpsLatLon",
         "type": "STRING",
         "mode": "NULLABLE"
     },
     {
-        "name": "first_name",
+        "name": "TotalWorkingHours",
+        "type": "NUMERIC",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "EngineRpm",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "EngineLoad",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "FuelConsumptionLH",
+        "type": "NUMERIC",
+        "mode": "NULLABLE",
+		"description": "Fuel consumption in liters per hour"
+    },
+    {
+        "name": "SpeedGearboxKmH",
+        "type": "NUMERIC",
+        "mode": "NULLABLE",
+		"description": "Speed measured at the gearbox in kilometers per hour"
+    },
+    {
+        "name": "SpeedRadarKmH",
+        "type": "NUMERIC",
+        "mode": "NULLABLE",
+		"description": "Speed measured relative to the ground in kilometers per hour"
+    },
+    {
+        "name": "TempCoolant",
+        "type": "NUMERIC",
+        "mode": "NULLABLE",
+		"description": "Temperature of the coolant liquid in C"
+    },
+    {
+        "name": "PtoFrontRpm",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "PtoRearRpm",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "GearShift",
         "type": "STRING",
         "mode": "NULLABLE"
     },
     {
-        "name": "last_name",
+        "name": "TempAmbient",
+        "type": "NUMERIC",
+        "mode": "NULLABLE",
+		"description": "Outside temperature in C"
+    },
+    {
+        "name": "ParkingBreakStatus",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "DiferentialLockStatus",
+        "type": "INTEGER",
+        "mode": "NULLABLE",
+		"description": "Transverse differential lock status"
+    },
+    {
+        "name": "AllWheelDriveStatus",
         "type": "STRING",
         "mode": "NULLABLE"
     },
     {
-        "name": "dob",
-        "type": "DATE",
+        "name": "CreeperStatus",
+        "type": "STRING",
         "mode": "NULLABLE"
-    },
-    {
-        "name": "addresses",
-        "type": "RECORD",
-        "mode": "REPEATED",
-        "fields": [
-            {
-                "name": "status",
-                "type": "STRING",
-                "mode": "NULLABLE"
-            },
-            {
-                "name": "address",
-                "type": "STRING",
-                "mode": "NULLABLE"
-            },
-            {
-                "name": "city",
-                "type": "STRING",
-                "mode": "NULLABLE"
-            },
-            {
-                "name": "state",
-                "type": "STRING",
-                "mode": "NULLABLE"
-            },
-            {
-                "name": "zip",
-                "type": "STRING",
-                "mode": "NULLABLE"
-            },
-            {
-                "name": "numberOfYears",
-                "type": "STRING",
-                "mode": "NULLABLE"
-            }
-        ]
     }
 ]
